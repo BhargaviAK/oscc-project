@@ -6,11 +6,20 @@ from routes.predict_route import router
 
 import os
 
+# -----------------------------
+# CREATE FOLDERS
+# -----------------------------
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("outputs", exist_ok=True)
 
+# -----------------------------
+# FASTAPI APP
+# -----------------------------
 app = FastAPI()
 
+# -----------------------------
+# HOME ROUTE
+# -----------------------------
 @app.get("/")
 def home():
     return {"message": "OSCC Backend Running"}
@@ -27,7 +36,7 @@ app.add_middleware(
 )
 
 # -----------------------------
-# ROUTES
+# API ROUTES
 # -----------------------------
 app.include_router(
     router,
@@ -41,4 +50,13 @@ app.mount(
     "/outputs",
     StaticFiles(directory="outputs"),
     name="outputs"
+)
+
+# -----------------------------
+# SERVE UPLOADED IMAGES (OPTIONAL)
+# -----------------------------
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
 )
