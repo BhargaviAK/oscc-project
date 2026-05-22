@@ -98,3 +98,32 @@ def predict_oscc(image_path):
     }
 
     return result
+
+import cv2
+import numpy as np
+
+
+def is_histopathology_image(image_path):
+
+    image = cv2.imread(image_path)
+
+    if image is None:
+        return False
+
+    image = cv2.resize(image, (224, 224))
+
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Detect pink/purple stain ranges
+    lower = np.array([120, 20, 20])
+    upper = np.array([170, 255, 255])
+
+    mask = cv2.inRange(hsv, lower, upper)
+
+    stain_ratio = np.sum(mask > 0) / (224 * 224)
+
+    # Threshold
+    if stain_ratio > 0.10:
+        return True
+
+    return False

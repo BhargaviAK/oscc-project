@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 import shutil
 import os
 
-from model.predict import predict_oscc
+from model.predict import predict_oscc, is_histopathology_image
 from model.gradcam import generate_gradcam
 
 from config import UPLOAD_FOLDER
@@ -26,11 +26,14 @@ async def predict(file: UploadFile = File(...)):
     # ---------------------------------
     # VALIDATE IMAGE
     # ---------------------------------
-    if not file.content_type.startswith("image/"):
+    allowed_extensions = ["jpg", "jpeg", "png"]
 
+    file_extension = file.filename.split(".")[-1].lower()
+    prediction_result = predict_oscc(file_path)
+    if file_extension not in allowed_extensions:
         return JSONResponse(
             content={
-                "error": "Only image files are allowed"
+                "error": "Only histopathology image formats (.jpg, .jpeg, .png) are allowed"
             },
             status_code=400
         )
@@ -49,6 +52,14 @@ async def predict(file: UploadFile = File(...)):
             file.file,
             buffer
         )
+
+    if not is_histopathology_image(file_path):
+    return JSONResponse(
+        content={
+            "error": "Please upload valid histopathology image"
+        },
+        status_code=400
+    )
 
     # ---------------------------------
     # PREDICTION
