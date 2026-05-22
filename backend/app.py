@@ -11,6 +11,10 @@ os.makedirs("outputs", exist_ok=True)
 
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {"message": "OSCC Backend Running"}
+
 # -----------------------------
 # CORS
 # -----------------------------
