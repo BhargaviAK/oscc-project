@@ -3,7 +3,11 @@ from fastapi.responses import JSONResponse
 import shutil
 import os
 
-from model.predict import predict_oscc, is_histopathology_image
+from model.predict import (
+    predict_oscc,
+    is_histopathology_image
+)
+
 from model.gradcam import generate_gradcam
 
 from config import UPLOAD_FOLDER
@@ -13,6 +17,7 @@ router = APIRouter()
 # ---------------------------------
 # RAILWAY BACKEND URL
 # ---------------------------------
+
 BASE_URL = "https://oscc-project-production.up.railway.app"
 
 
@@ -24,23 +29,30 @@ BASE_URL = "https://oscc-project-production.up.railway.app"
 async def predict(file: UploadFile = File(...)):
 
     # ---------------------------------
-    # VALIDATE IMAGE
+    # VALIDATE EXTENSION
     # ---------------------------------
-    allowed_extensions = ["jpg", "jpeg", "png"]
+
+    allowed_extensions = [
+        "jpg",
+        "jpeg",
+        "png"
+    ]
 
     file_extension = file.filename.split(".")[-1].lower()
-    prediction_result = predict_oscc(file_path)
+
     if file_extension not in allowed_extensions:
+
         return JSONResponse(
             content={
-                "error": "Only histopathology image formats (.jpg, .jpeg, .png) are allowed"
+                "error": "Only image files (.jpg, .jpeg, .png) are allowed"
             },
             status_code=400
         )
 
     # ---------------------------------
-    # SAVE UPLOADED FILE
+    # SAVE FILE
     # ---------------------------------
+
     file_path = os.path.join(
         UPLOAD_FOLDER,
         file.filename
@@ -53,17 +65,23 @@ async def predict(file: UploadFile = File(...)):
             buffer
         )
 
+    # ---------------------------------
+    # VALIDATE HISTOPATHOLOGY IMAGE
+    # ---------------------------------
+
     if not is_histopathology_image(file_path):
-    return JSONResponse(
-        content={
-            "error": "Please upload valid histopathology image"
-        },
-        status_code=400
-    )
+
+        return JSONResponse(
+            content={
+                "error": "Please upload valid histopathology image"
+            },
+            status_code=400
+        )
 
     # ---------------------------------
     # PREDICTION
     # ---------------------------------
+
     prediction_result = predict_oscc(
         file_path
     )
@@ -71,6 +89,7 @@ async def predict(file: UploadFile = File(...)):
     # ---------------------------------
     # GENERATE GRADCAM
     # ---------------------------------
+
     heatmap_path, contour_path = generate_gradcam(
         file_path
     )
@@ -78,22 +97,23 @@ async def predict(file: UploadFile = File(...)):
     # ---------------------------------
     # CLEAN PATHS
     # ---------------------------------
+
     heatmap_path = heatmap_path.replace("\\", "/")
+
     contour_path = contour_path.replace("\\", "/")
-    
 
     # ---------------------------------
     # FULL URLS
     # ---------------------------------
+
     heatmap_url = f"{BASE_URL}/{heatmap_path}"
 
     contour_url = f"{BASE_URL}/{contour_path}"
 
-    
-
     # ---------------------------------
     # RESPONSE
     # ---------------------------------
+
     result = {
 
         "success": True,
@@ -106,13 +126,11 @@ async def predict(file: UploadFile = File(...)):
         "confidence":
             prediction_result["confidence"],
 
-        # Explainability Outputs
         "heatmap":
             heatmap_url,
 
         "contour_image":
             contour_url,
-
     }
 
     return JSONResponse(content=result)

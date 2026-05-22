@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
+import cv2
+import numpy as np
 
 # ============================================
 # DEVICE
@@ -30,7 +32,6 @@ model.load_state_dict(
     torch.load(
         "model/best_efficientnet_b0.pth",
         map_location=device
-        
     )
 )
 
@@ -61,10 +62,60 @@ transform = transforms.Compose([
 ])
 
 # ============================================
+# HISTOPATHOLOGY VALIDATION
+# ============================================
+
+def is_histopathology_image(image_path):
+
+    image = cv2.imread(image_path)
+
+    if image is None:
+        return False
+
+    image = cv2.resize(image, (224, 224))
+
+    hsv = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2HSV
+    )
+
+    # Pink / Purple stain range
+    lower = np.array([120, 20, 20])
+    upper = np.array([170, 255, 255])
+
+    mask = cv2.inRange(
+        hsv,
+        lower,
+        upper
+    )
+
+    stain_ratio = np.sum(mask > 0) / (224 * 224)
+
+    # Threshold
+    if stain_ratio > 0.10:
+        return True
+
+    return False
+
+# ============================================
 # PREDICTION FUNCTION
 # ============================================
 
 def predict_oscc(image_path):
+
+    # ----------------------------------------
+    # VALIDATE HISTOPATHOLOGY IMAGE
+    # ----------------------------------------
+
+    if not is_histopathology_image(image_path):
+
+        return {
+            "error": "Please upload valid histopathology image"
+        }
+
+    # ----------------------------------------
+    # LOAD IMAGE
+    # ----------------------------------------
 
     image = Image.open(image_path).convert("RGB")
 
@@ -74,11 +125,18 @@ def predict_oscc(image_path):
 
     image = image.to(device)
 
+    # ----------------------------------------
+    # MODEL PREDICTION
+    # ----------------------------------------
+
     with torch.no_grad():
 
         outputs = model(image)
 
-        probabilities = torch.softmax(outputs, dim=1)
+        probabilities = torch.softmax(
+            outputs,
+            dim=1
+        )
 
         confidence, predicted = torch.max(
             probabilities,
@@ -98,32 +156,3 @@ def predict_oscc(image_path):
     }
 
     return result
-
-import cv2
-import numpy as np
-
-
-def is_histopathology_image(image_path):
-
-    image = cv2.imread(image_path)
-
-    if image is None:
-        return False
-
-    image = cv2.resize(image, (224, 224))
-
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    # Detect pink/purple stain ranges
-    lower = np.array([120, 20, 20])
-    upper = np.array([170, 255, 255])
-
-    mask = cv2.inRange(hsv, lower, upper)
-
-    stain_ratio = np.sum(mask > 0) / (224 * 224)
-
-    # Threshold
-    if stain_ratio > 0.10:
-        return True
-
-    return False
