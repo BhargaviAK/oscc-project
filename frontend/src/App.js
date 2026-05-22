@@ -12,12 +12,14 @@ function App() {
   // -----------------------------
   // BACKEND URL
   // -----------------------------
+
   const BACKEND_URL =
     "https://oscc-project-production.up.railway.app";
 
   // -----------------------------
   // HANDLE IMAGE
   // -----------------------------
+
   const handleImageChange = (event) => {
 
     setImage(event.target.files[0]);
@@ -28,6 +30,7 @@ function App() {
   // -----------------------------
   // HANDLE PREDICTION
   // -----------------------------
+
   const handlePredict = async () => {
 
     if (!image) {
@@ -55,14 +58,26 @@ function App() {
         }
       );
 
-      if (!response.ok) {
-
-        throw new Error("Prediction failed");
-      }
+      // ---------------------------------
+      // HANDLE BACKEND ERRORS
+      // ---------------------------------
 
       const data = await response.json();
 
-      console.log("Backend Response:", data);
+      if (!response.ok) {
+
+        alert(
+          data.error ||
+          "Prediction failed"
+        );
+
+        return;
+      }
+
+      console.log(
+        "Backend Response:",
+        data
+      );
 
       setResult(data);
 
@@ -83,6 +98,7 @@ function App() {
   // -----------------------------
   // UI
   // -----------------------------
+
   return (
 
     <div className="app-container">
@@ -98,6 +114,7 @@ function App() {
         </p>
 
         {/* FILE INPUT */}
+
         <input
           className="file-input"
           type="file"
@@ -106,6 +123,7 @@ function App() {
         />
 
         {/* IMAGE PREVIEW */}
+
         {image && (
 
           <div>
@@ -136,6 +154,7 @@ function App() {
         )}
 
         {/* LOADING */}
+
         {loading && (
 
           <p className="loading-text">
@@ -145,6 +164,7 @@ function App() {
         )}
 
         {/* RESULT */}
+
         {result && (
 
           <div className="result-box">
@@ -154,14 +174,19 @@ function App() {
             </h2>
 
             <p>
-              <strong>Prediction:</strong> {result.prediction}
+              <strong>Prediction:</strong>
+              {" "}
+              {result.prediction}
             </p>
 
             <p>
-              <strong>Confidence:</strong> {result.confidence}%
+              <strong>Confidence:</strong>
+              {" "}
+              {result.confidence}%
             </p>
 
             {/* HEATMAP */}
+
             {result.heatmap && (
 
               <div className="output-section">
@@ -175,10 +200,12 @@ function App() {
                   alt="Heatmap"
                   className="output-image"
                   onError={(e) => {
+
                     console.log(
                       "Heatmap failed:",
                       result.heatmap
                     );
+
                     e.target.style.display = "none";
                   }}
                 />
@@ -188,6 +215,7 @@ function App() {
             )}
 
             {/* CONTOUR */}
+
             {result.contour_image && (
 
               <div className="output-section">
@@ -201,10 +229,12 @@ function App() {
                   alt="Contour"
                   className="output-image"
                   onError={(e) => {
+
                     console.log(
                       "Contour failed:",
                       result.contour_image
                     );
+
                     e.target.style.display = "none";
                   }}
                 />
@@ -214,6 +244,7 @@ function App() {
             )}
 
             {/* COMPARISON IMAGE */}
+
             {result.comparison_image && (
 
               <div className="output-section">
@@ -227,10 +258,12 @@ function App() {
                   alt="Comparison"
                   className="output-image"
                   onError={(e) => {
+
                     console.log(
                       "Comparison failed:",
                       result.comparison_image
                     );
+
                     e.target.style.display = "none";
                   }}
                 />
