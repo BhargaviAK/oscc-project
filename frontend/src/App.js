@@ -55,19 +55,24 @@ function App() {
         }
       );
 
+      if (!response.ok) {
+
+        throw new Error("Prediction failed");
+      }
+
       const data = await response.json();
 
       setResult(data);
-
-      setLoading(false);
 
     } catch (error) {
 
       console.error(error);
 
-      setLoading(false);
-
       alert("Error connecting to backend");
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
@@ -123,6 +128,7 @@ function App() {
             </div>
 
           </div>
+
         )}
 
         {/* LOADING */}
