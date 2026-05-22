@@ -12,12 +12,14 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 # -----------------------------
 # DEVICE
 # -----------------------------
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
 
 # -----------------------------
 # LOAD MODEL
 # -----------------------------
-model = models.efficientnet_b0(pretrained=False)
+model = models.efficientnet_b0(weights=None)
 
 model.classifier[1] = nn.Linear(
     in_features=1280,
@@ -39,8 +41,11 @@ model.eval()
 # IMAGE TRANSFORM
 # -----------------------------
 transform = transforms.Compose([
+
     transforms.Resize((224, 224)),
+
     transforms.ToTensor(),
+
     transforms.Normalize(
         mean=(0.485, 0.456, 0.406),
         std=(0.229, 0.224, 0.225)
@@ -64,16 +69,21 @@ def generate_gradcam(image_path):
     input_tensor = transform(image).unsqueeze(0).to(device)
 
     # -----------------------------
-    # GRAD-CAM
+    # TARGET LAYER
     # -----------------------------
     target_layers = [model.features[-1]]
 
+    # -----------------------------
+    # GRADCAM
+    # -----------------------------
     cam = GradCAM(
         model=model,
         target_layers=target_layers
     )
 
-    grayscale_cam = cam(input_tensor=input_tensor)[0]
+    grayscale_cam = cam(
+        input_tensor=input_tensor
+    )[0]
 
     visualization = show_cam_on_image(
         rgb_img,
@@ -84,7 +94,9 @@ def generate_gradcam(image_path):
     # -----------------------------
     # BOUNDARY LOCALIZATION
     # -----------------------------
-    heatmap_uint8 = np.uint8(grayscale_cam * 255)
+    heatmap_uint8 = np.uint8(
+        grayscale_cam * 255
+    )
 
     _, threshold = cv2.threshold(
         heatmap_uint8,
@@ -110,25 +122,50 @@ def generate_gradcam(image_path):
     )
 
     # -----------------------------
+    # CREATE OUTPUT DIRECTORIES
+    # -----------------------------
+    os.makedirs(
+        "outputs/heatmaps",
+        exist_ok=True
+    )
+
+    os.makedirs(
+        "outputs/contours",
+        exist_ok=True
+    )
+
+    # -----------------------------
     # OUTPUT FILENAMES
     # -----------------------------
-    filename = os.path.basename(image_path).split(".")[0]
+    filename = os.path.basename(
+        image_path
+    ).split(".")[0]
 
-    heatmap_path = f"outputs/heatmaps/{filename}_heatmap.jpg"
+    heatmap_path = (
+        f"outputs/heatmaps/{filename}_heatmap.jpg"
+    )
 
-    contour_path = f"outputs/contours/{filename}_contour.jpg"
+    contour_path = (
+        f"outputs/contours/{filename}_contour.jpg"
+    )
 
     # -----------------------------
     # SAVE OUTPUTS
     # -----------------------------
     cv2.imwrite(
         heatmap_path,
-        cv2.cvtColor(visualization, cv2.COLOR_RGB2BGR)
+        cv2.cvtColor(
+            visualization,
+            cv2.COLOR_RGB2BGR
+        )
     )
 
     cv2.imwrite(
         contour_path,
-        cv2.cvtColor(boundary_image, cv2.COLOR_RGB2BGR)
+        cv2.cvtColor(
+            boundary_image,
+            cv2.COLOR_RGB2BGR
+        )
     )
 
     # -----------------------------
@@ -136,6 +173,5 @@ def generate_gradcam(image_path):
     # -----------------------------
     return (
         heatmap_path,
-        contour_path,
-        None
+        contour_path
     )

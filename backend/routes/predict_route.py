@@ -60,7 +60,7 @@ async def predict(file: UploadFile = File(...)):
     # ---------------------------------
     # GENERATE GRADCAM
     # ---------------------------------
-    heatmap_path, contour_path, comparison_path = generate_gradcam(
+    heatmap_path, contour_path = generate_gradcam(
         file_path
     )
 
@@ -69,7 +69,7 @@ async def predict(file: UploadFile = File(...)):
     # ---------------------------------
     heatmap_path = heatmap_path.replace("\\", "/")
     contour_path = contour_path.replace("\\", "/")
-    comparison_path = comparison_path.replace("\\", "/")
+    
 
     # ---------------------------------
     # FULL URLS
@@ -78,7 +78,7 @@ async def predict(file: UploadFile = File(...)):
 
     contour_url = f"{BASE_URL}/{contour_path}"
 
-    comparison_url = f"{BASE_URL}/{comparison_path}"
+    
 
     # ---------------------------------
     # RESPONSE
@@ -102,8 +102,6 @@ async def predict(file: UploadFile = File(...)):
         "contour_image":
             contour_url,
 
-        "comparison_image":
-            comparison_url
     }
 
     return JSONResponse(content=result)
