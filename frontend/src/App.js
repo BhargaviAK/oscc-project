@@ -62,6 +62,8 @@ function App() {
 
       const data = await response.json();
 
+      console.log("Backend Response:", data);
+
       setResult(data);
 
     } catch (error) {
@@ -167,9 +169,13 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}/${result.heatmap.replace(/\\/g, "/")}`}
+                  src={result.heatmap}
                   alt="Heatmap"
                   className="output-image"
+                  onError={(e) => {
+                    console.log("Heatmap failed:", result.heatmap);
+                    e.target.style.display = "none";
+                  }}
                 />
 
               </div>
@@ -186,9 +192,36 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}/${result.contour_image.replace(/\\/g, "/")}`}
+                  src={result.contour_image}
                   alt="Contour"
                   className="output-image"
+                  onError={(e) => {
+                    console.log("Contour failed:", result.contour_image);
+                    e.target.style.display = "none";
+                  }}
+                />
+
+              </div>
+
+            )}
+
+            {/* COMPARISON IMAGE */}
+            {result.comparison_image && (
+
+              <div className="output-section">
+
+                <h3>
+                  Comparison Output
+                </h3>
+
+                <img
+                  src={result.comparison_image}
+                  alt="Comparison"
+                  className="output-image"
+                  onError={(e) => {
+                    console.log("Comparison failed:", result.comparison_image);
+                    e.target.style.display = "none";
+                  }}
                 />
 
               </div>
