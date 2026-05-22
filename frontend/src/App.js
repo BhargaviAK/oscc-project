@@ -167,7 +167,7 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}/${result.heatmap}`}
+                  src={`${BACKEND_URL}/${result.heatmap.replace(/\\/g, "/")}`}
                   alt="Heatmap"
                   className="output-image"
                 />
@@ -186,7 +186,7 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}/${result.contour_image}`}
+                  src={`${BACKEND_URL}/${result.contour_image.replace(/\\/g, "/")}`}
                   alt="Contour"
                   className="output-image"
                 />
