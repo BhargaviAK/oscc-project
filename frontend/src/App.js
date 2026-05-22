@@ -171,13 +171,13 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}${result.heatmap}`}
+                  src={result.heatmap}
                   alt="Heatmap"
                   className="output-image"
                   onError={(e) => {
                     console.log(
                       "Heatmap failed:",
-                      `${BACKEND_URL}${result.heatmap}`
+                      result.heatmap
                     );
                     e.target.style.display = "none";
                   }}
@@ -197,13 +197,13 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}${result.contour_image}`}
+                  src={result.contour_image}
                   alt="Contour"
                   className="output-image"
                   onError={(e) => {
                     console.log(
                       "Contour failed:",
-                      `${BACKEND_URL}${result.contour_image}`
+                      result.contour_image
                     );
                     e.target.style.display = "none";
                   }}
@@ -223,13 +223,13 @@ function App() {
                 </h3>
 
                 <img
-                  src={`${BACKEND_URL}${result.comparison_image}`}
+                  src={result.comparison_image}
                   alt="Comparison"
                   className="output-image"
                   onError={(e) => {
                     console.log(
                       "Comparison failed:",
-                      `${BACKEND_URL}${result.comparison_image}`
+                      result.comparison_image
                     );
                     e.target.style.display = "none";
                   }}
