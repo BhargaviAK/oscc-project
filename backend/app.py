@@ -4,6 +4,11 @@ from fastapi.staticfiles import StaticFiles
 
 from routes.predict_route import router
 
+import os
+
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
+
 app = FastAPI()
 
 # -----------------------------
