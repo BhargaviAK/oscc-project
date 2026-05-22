@@ -70,7 +70,9 @@ function App() {
 
       console.error(error);
 
-      alert("Error connecting to backend");
+      alert(
+        "Backend is waking up. Please wait a few seconds and try again."
+      );
 
     } finally {
 
@@ -137,7 +139,7 @@ function App() {
         {loading && (
 
           <p className="loading-text">
-            Predicting...
+            Predicting... Please wait
           </p>
 
         )}
@@ -169,11 +171,14 @@ function App() {
                 </h3>
 
                 <img
-                  src={result.heatmap}
+                  src={`${BACKEND_URL}${result.heatmap}`}
                   alt="Heatmap"
                   className="output-image"
                   onError={(e) => {
-                    console.log("Heatmap failed:", result.heatmap);
+                    console.log(
+                      "Heatmap failed:",
+                      `${BACKEND_URL}${result.heatmap}`
+                    );
                     e.target.style.display = "none";
                   }}
                 />
@@ -192,11 +197,14 @@ function App() {
                 </h3>
 
                 <img
-                  src={result.contour_image}
+                  src={`${BACKEND_URL}${result.contour_image}`}
                   alt="Contour"
                   className="output-image"
                   onError={(e) => {
-                    console.log("Contour failed:", result.contour_image);
+                    console.log(
+                      "Contour failed:",
+                      `${BACKEND_URL}${result.contour_image}`
+                    );
                     e.target.style.display = "none";
                   }}
                 />
@@ -215,11 +223,14 @@ function App() {
                 </h3>
 
                 <img
-                  src={result.comparison_image}
+                  src={`${BACKEND_URL}${result.comparison_image}`}
                   alt="Comparison"
                   className="output-image"
                   onError={(e) => {
-                    console.log("Comparison failed:", result.comparison_image);
+                    console.log(
+                      "Comparison failed:",
+                      `${BACKEND_URL}${result.comparison_image}`
+                    );
                     e.target.style.display = "none";
                   }}
                 />
