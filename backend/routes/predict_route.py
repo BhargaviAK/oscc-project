@@ -27,8 +27,11 @@ async def predict(file: UploadFile = File(...)):
     # VALIDATE IMAGE
     # ---------------------------------
     if not file.content_type.startswith("image/"):
+
         return JSONResponse(
-            content={"error": "Only image files are allowed"},
+            content={
+                "error": "Only image files are allowed"
+            },
             status_code=400
         )
 
@@ -41,12 +44,18 @@ async def predict(file: UploadFile = File(...)):
     )
 
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+
+        shutil.copyfileobj(
+            file.file,
+            buffer
+        )
 
     # ---------------------------------
     # PREDICTION
     # ---------------------------------
-    prediction_result = predict_oscc(file_path)
+    prediction_result = predict_oscc(
+        file_path
+    )
 
     # ---------------------------------
     # GENERATE GRADCAM
@@ -56,26 +65,45 @@ async def predict(file: UploadFile = File(...)):
     )
 
     # ---------------------------------
-    # FIX PATHS FOR WEB ACCESS
+    # CLEAN PATHS
+    # ---------------------------------
+    heatmap_path = heatmap_path.replace("\\", "/")
+    contour_path = contour_path.replace("\\", "/")
+    comparison_path = comparison_path.replace("\\", "/")
+
+    # ---------------------------------
+    # FULL URLS
     # ---------------------------------
     heatmap_url = f"{BASE_URL}/{heatmap_path}"
+
     contour_url = f"{BASE_URL}/{contour_path}"
+
     comparison_url = f"{BASE_URL}/{comparison_path}"
 
     # ---------------------------------
     # RESPONSE
     # ---------------------------------
     result = {
+
         "success": True,
+
         "filename": file.filename,
 
-        "prediction": prediction_result["prediction"],
-        "confidence": prediction_result["confidence"],
+        "prediction":
+            prediction_result["prediction"],
 
-        # Explainability outputs
-        "heatmap": heatmap_url,
-        "contour_image": contour_url,
-        "comparison_image": comparison_url
+        "confidence":
+            prediction_result["confidence"],
+
+        # Explainability Outputs
+        "heatmap":
+            heatmap_url,
+
+        "contour_image":
+            contour_url,
+
+        "comparison_image":
+            comparison_url
     }
 
     return JSONResponse(content=result)
