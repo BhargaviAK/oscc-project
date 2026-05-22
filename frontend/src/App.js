@@ -10,6 +10,12 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   // -----------------------------
+  // BACKEND URL
+  // -----------------------------
+  const BACKEND_URL =
+    "https://oscc-project-production.up.railway.app";
+
+  // -----------------------------
   // HANDLE IMAGE
   // -----------------------------
   const handleImageChange = (event) => {
@@ -42,7 +48,7 @@ function App() {
       setResult(null);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/predict",
+        `${BACKEND_URL}/api/v1/predict`,
         {
           method: "POST",
           body: formData,
@@ -155,7 +161,7 @@ function App() {
                 </h3>
 
                 <img
-                  src={`http://127.0.0.1:8000/${result.heatmap}`}
+                  src={`${BACKEND_URL}/${result.heatmap}`}
                   alt="Heatmap"
                   className="output-image"
                 />
@@ -174,7 +180,7 @@ function App() {
                 </h3>
 
                 <img
-                  src={`http://127.0.0.1:8000/${result.contour_image}`}
+                  src={`${BACKEND_URL}/${result.contour_image}`}
                   alt="Contour"
                   className="output-image"
                 />
