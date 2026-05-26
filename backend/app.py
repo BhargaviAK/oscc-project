@@ -18,13 +18,6 @@ os.makedirs("outputs", exist_ok=True)
 app = FastAPI()
 
 # -----------------------------
-# HOME ROUTE
-# -----------------------------
-@app.get("/")
-def home():
-    return {"message": "OSCC Backend Running"}
-
-# -----------------------------
 # CORS
 # -----------------------------
 app.add_middleware(
@@ -60,3 +53,7 @@ app.mount(
     StaticFiles(directory="uploads"),
     name="uploads"
 )
+
+@app.get("/")
+def health():
+    return {"status": "Backend Running"}
