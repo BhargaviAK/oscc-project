@@ -8,6 +8,7 @@ function App() {
   const [result, setResult] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   // -----------------------------
   // BACKEND URL
@@ -156,13 +157,7 @@ function App() {
 
         {/* LOADING */}
 
-        {loading && (
-
-          <p className="loading-text">
-            Predicting... Please wait
-          </p>
-
-        )}
+        {loading && <p>{message}</p>}
 
         {/* RESULT */}
 
