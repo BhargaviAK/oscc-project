@@ -116,6 +116,7 @@ def predict_oscc(image_path):
     # ----------------------------------------
 
     image = Image.open(image_path).convert("RGB")
+    image = image.resize((224, 224))
 
     image = transform(image)
 
