@@ -45,7 +45,7 @@ function App() {
     formData.append("file", image);
 
     try {
-
+      setMessage("Analyzing histopathology image...");
       setLoading(true);
 
       setResult(null);
@@ -63,6 +63,7 @@ function App() {
       // ---------------------------------
 
       const data = await response.json();
+      setMessage("Generating explainability outputs...");
 
       if (!response.ok) {
 
@@ -90,7 +91,7 @@ function App() {
       );
 
     } finally {
-
+      setMessage("Prediction completed");
       setLoading(false);
     }
   };
