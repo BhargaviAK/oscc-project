@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OSCC Detection System</string>
+    <string name="title_activity_main">OSCC Detection System</string>
+    <string name="package_name">com.oscc.detection</string>
+    <string name="custom_url_scheme">com.oscc.detection</string>
+</resources>
