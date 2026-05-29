@@ -9,7 +9,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   const BACKEND_URL =
-    "https://oscc-project-production.up.railway.app";
+    "http://16.171.225.133:8000";
 
   const handleImageChange = (event) => {
     setImage(event.target.files[0]);
